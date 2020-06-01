@@ -11,9 +11,6 @@
 				<view class="iconfont icon-sup" @click="toolBarClick('sup')"></view>
 				<view class="iconfont icon-sub" @click="toolBarClick('sub')"></view>				
 				<view class="iconfont icon-save" @click="toolBarClick('save')"></view>
-		<!-- 		<view class="iconfont icon-alignleft" @click="toolBarClick('alignleft')"></view>
-				<view class="iconfont icon-aligncenter" @click="toolBarClick('aligncenter')"></view>
-				<view class="iconfont icon-alignright" @click="toolBarClick('alignright')"></view> -->
 				<view class="iconfont icon-link" @click="toolBarClick('link')"></view>
 				<view class="iconfont icon-image" @click="toolBarClick('imgage')"></view>
 				<view class="iconfont icon-code" @click="toolBarClick('code')"></view>
@@ -30,7 +27,7 @@
 				<uParse :content="textareaHtmlSync" @preview="preview" @navigate="navigate" />
 			</scroll-view>
 		</view>
-		<prompt ref="prompt" @onConfirm="onConfirm" @onCancel="onCancel" title="标题" :value="promptText"></prompt>
+		<prompt ref="prompt" @onConfirm="onConfirm" @onCancel="onCancel" title="标题" ></prompt>
 
 	</view>
 </template>
@@ -38,7 +35,7 @@
 <script>
 	let saveStatus = false;
 	let saveLength =0;
-	import marked from '../marked'
+	import marked from '@/components/marked'
 	import uParse from '@/components/gaoyia-parse/parse.vue'
 	import prompt from '../../pages/prompt/prompt.vue'
 	import App from '../../App.vue'
@@ -50,6 +47,7 @@
 		},
 		data: function() {
 			return {
+				noteId:'',
 				cost: '',
 				promptText: '',
 				screenHeight: 0,
@@ -165,9 +163,11 @@
 				} else if (type == "undo") {
 
 					if (this.textareaData == null || this.textareaData == ""||(saveStatus==true&&saveLength==this.textareaData.length)) {
-						uni.navigateBack({
-							delta: 1
+						setTimeout(() => {
+						uni.navigateTo({
+							url: '/pages/index/mdDetail?note=' + this.noteId,
 						})
+						},100)
 					} else {
 						uni.showModal({
 							title: "提示",
@@ -175,10 +175,11 @@
 							confirmColor: "#CC0000",
 							success: res => {
 								if (res.confirm) {
-									uni.switchTab({
-										url:'../../pages/index/index',
-										
+									setTimeout(() => {
+									uni.navigateTo({
+										url: '/pages/index/mdDetail?note=' + this.noteId,
 									})
+									},100)
 								}
 							}
 						})
@@ -235,6 +236,7 @@
 			},
 			prompt: function() {
 				this.$refs.prompt.show();
+				this.$refs.prompt._value(this.cost)
 			},
 			onConfirm: function(e) {
 				console.log(e);
@@ -251,21 +253,20 @@
 					this.$refs.prompt.hide();
 					console.log('标题：', _cost, '内容：', this.textareaData,this.textareaHtml)
 					let info = uni.getStorageSync("detail")
-					uni.uploadFile({
-						url: App.requestIp + "note/newBuiltNoteReplace",
-						filePath: "",
+					uni.request({
+						url: App.requestIp + "note/updateNoteReplace1",
+						method:"PUT",
 						header: {
 							token: uni.getStorageSync('token')
 						},
-						name: "",
-						formData: {
-							"noteUrl": this.textareaData,
+						data: {
+							"noteId":this.noteId,
+							"noteUrl": this.textareaDataSync,
 							"noteUserAccount": info.account,
 							"noteTitle": _cost,
-							"noteType": "md文件"
-						},
+							},
 						success: (res) => {
-							if (JSON.parse(res.data).status === 200) {
+							if (res.data.status === 200) {
 								uni.showModal({
 									title: "提示",
 									content: "保存并退出?",
@@ -273,9 +274,11 @@
 									confirmColor: "#707070",
 									success: res => {
 										if (res.confirm) {
-											uni.navigateBack({
-												delta: 1
+											setTimeout(() => {
+											uni.navigateTo({
+												url: '/pages/index/mdDetail?note=' + this.noteId
 											})
+											},100)
 										}
 									}
 								})
@@ -293,6 +296,36 @@
 			onCancel: function() {
 				this.$refs.prompt.hide();
 				this.$refs.prompt.cost = '';
+				setTimeout(() => {
+				uni.navigateTo({
+					url: '/pages/index/mdDetail?note=' + this.noteId
+				})
+				},100)
+			},
+			load(noteId) {
+				this.test = true
+				this.test = true
+				let info = uni.getStorageSync("detail")
+				uni.request({
+					url: App.requestIp + "note/selectOneNoteByNoteId/" + info.account + '/' + noteId,
+					method: "GET",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					data: {},
+					success: res => {
+						this.textareaDataSync = res.data.result[0].note.noteUrl;
+						this.cost= res.data.result[0].note.noteTitle;
+						console.log(this.promptText)
+					}
+				});
+			
+			}
+		},
+		onLoad(note) {
+			if (note.noteId){
+				this.noteId=note.noteId
+			this.load(this.noteId)
 			}
 		},
 		watch: {
@@ -317,8 +350,8 @@
 </script>
 
 <style>
-	@import './markdown.css';
-	@import url("../gaoyia-parse/parse.css");
+	@import '@/components/ly-markdown/markdown.css';
+	@import url("@/components/gaoyia-parse/parse.css");
 
 	.input-content {
 		width: 100%;

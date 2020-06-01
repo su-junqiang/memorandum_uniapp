@@ -1,5 +1,4 @@
 <template>
-
 	<view>
 
 		<!-- 文章内容区 -->
@@ -118,6 +117,7 @@
 			this.skip = this.limit + this.skip;
 			this.getNewsList();
 		},
+		
 		onNavigationBarButtonTap(value) {
 			if (value.float == "right") {
 				uni.navigateTo({
@@ -136,14 +136,8 @@
 		},
 		methods: {
 			mdDetail(note) {
-				// uni.setStorage({
-				// 	key: 'noteUrl',
-				// 	data: note.noteUrl
-				// })
 				uni.navigateTo({
-					url: '/pages/index/mdDetail?note=' + note.noteId,
-					animationType: 'fade-in',
-					animationDuration: 300
+					url: '/pages/index/mdDetail?note=' + note.noteId
 				})
 			},
 			getNewsList: function() {

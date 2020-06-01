@@ -16,7 +16,8 @@
 		},
 		data() {
 			return {
-				textareaData: "ddddddddddddddddddddddddddddddddddd",
+				noteId:'',
+				textareaData: "",
 				textareaHtml:"",
 				showPreview:true
 			}
@@ -26,7 +27,8 @@
 				this.showPreview = true;
 				// console.log(this.textareaData)
 			}
-		}
+		},
+		
 	}
 </script>
 

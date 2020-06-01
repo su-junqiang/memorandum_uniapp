@@ -6,7 +6,7 @@
 			"style": {
 				"enablePullDownRefresh": true,
 				"navigationBarTitleText": "最新",
-				"onReachBottomDistance":50,
+				"onReachBottomDistance": 50,
 				"backgroundTextStyle": "dark",
 				"app-plus": {
 					"pullToRefresh": {
@@ -24,20 +24,20 @@
 						// 	"placeholderColor": "#cccccc",
 						// 	"disabled": false
 						// },
-						"buttons": [{
-							// 	"text": "\ue67a",
-							// 	"fontSrc": "/static/iconfont.ttf",
-							// 	"float": "right",
-							// 	"fontSize": "30",
-							// 	"width": "40px"
-							// },
-							// {
-							"text": "\ue67a",
-							"float": "right",
-							"fontSize": "30",
-							"type": "menu",
-							"width": "40px"
-						}]
+						// "buttons": [{
+						// 	// 	"text": "\ue67a",
+						// 	// 	"fontSrc": "/static/iconfont.ttf",
+						// 	// 	"float": "right",
+						// 	// 	"fontSize": "30",
+						// 	// 	"width": "40px"
+						// 	// },
+						// 	// {
+						// 	"text": "\ue67a",
+						// 	"float": "right",
+						// 	"fontSize": "30",
+						// 	"type": "menu",
+						// 	"width": "40px"
+						// }]
 					}
 				}
 			}
@@ -133,8 +133,25 @@
 		}, {
 			"path": "pages/index/mdDetail",
 			"style": {
-				"navigationBarTitleText": "详情"
-
+				"navigationBarTitleText": "详情",
+				"app-plus": {
+					"titleNView": {
+						"buttons": [{
+							"text": "编辑",
+							"float": "right",
+							"fontSize": "15",
+							"width": "50px"
+						}]
+					}
+				}
+			}
+		},
+		 {
+			"path": "pages/index/editNote",
+			"style": {
+				"app-plus": {
+				"titleNView": false
+				}
 			}
 		}
 	],

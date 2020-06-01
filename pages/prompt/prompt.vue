@@ -55,6 +55,9 @@
 			 * 内部私有方法建议以下划线开头
 			 * triggerEvent 用于触发事件
 			 */
+			_value(title){
+				this.cost=title;
+			},
 			_cancel() {
 				//触发cancel事件，即在外部，在组件上绑定cancel事件即可，bind:cancel，像绑定tap一样
 				this.cost = '';
