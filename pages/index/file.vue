@@ -2,16 +2,22 @@
 	<view>
 		<uni-fab :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction" @trigger="trigger"
 		 ref="fab"></uni-fab>
+		 <folder-list></folder-list>
+		 <file-list></file-list>
 	</view>
 </template>
 
 <script>
 	import uniIcon from '@/components/uni-icon/uni-icon.vue';
 	import uniFab from  '@/components/uni-fab/uni-fab.vue';
+	import fileList from './file/fileList.vue';
+	import folderList from './file/folderList.vue'
 	export default {
 		components: {
 			uniFab,
-			uniIcon
+			uniIcon,
+			fileList,
+			folderList
 		},
 		data() {
 			return {
