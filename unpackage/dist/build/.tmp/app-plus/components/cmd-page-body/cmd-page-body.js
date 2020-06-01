@@ -1,0 +1,10 @@
+(global["webpackJsonp"]=global["webpackJsonp"]||[]).push([["components/cmd-page-body/cmd-page-body"],{"5d3d":function(t,o,n){},"6dd0":function(t,o,n){"use strict";n.r(o);var e=n("6f7f"),u=n("7c48");for(var c in u)"default"!==c&&function(t){n.d(o,t,function(){return u[t]})}(c);n("f719");var a=n("2877"),r=Object(a["a"])(u["default"],e["a"],e["b"],!1,null,null,null);o["default"]=r.exports},"6f7f":function(t,o,n){"use strict";var e=function(){var t=this,o=t.$createElement;t._self._c},u=[];n.d(o,"a",function(){return e}),n.d(o,"b",function(){return u})},"7c48":function(t,o,n){"use strict";n.r(o);var e=n("cf42"),u=n.n(e);for(var c in e)"default"!==c&&function(t){n.d(o,t,function(){return e[t]})}(c);o["default"]=u.a},cf42:function(t,o,n){"use strict";(function(t){Object.defineProperty(o,"__esModule",{value:!0}),o.default=void 0;var n={name:"cmd-page-body",props:{type:{type:String,default:"top"},backgroundColor:{type:String,default:""}},data:function(){return{bodyHeight:0}},computed:{setBodyClass:function(){var t=["cmd-page-body","cmd-page-body-top-bottom"];return"top"==this.type&&(t.splice(1),t.push("cmd-page-body-top")),"bottom"==this.type&&(t.splice(1),t.push("cmd-page-body-bottom")),t},setBackgroundColor:function(){var t="background: #ffffff;";return this.backgroundColor&&(t="background: ".concat(this.backgroundColor,";")),t}},mounted:function(){var o=t.getSystemInfoSync().windowHeight;o-=t.getSystemInfoSync().statusBarHeight,"top"==this.type&&(o-=t.upx2px(88)),"bottom"==this.type&&(o-=t.upx2px(118)),"top-bottom"==this.type&&(o-=t.upx2px(206)),this.bodyHeight="min-height:".concat(o,"px")}};o.default=n}).call(this,n("6e42")["default"])},f719:function(t,o,n){"use strict";var e=n("5d3d"),u=n.n(e);u.a}}]);
+;(global["webpackJsonp"] = global["webpackJsonp"] || []).push([
+    'components/cmd-page-body/cmd-page-body-create-component',
+    {
+        'components/cmd-page-body/cmd-page-body-create-component':(function(module, exports, __webpack_require__){
+            __webpack_require__('6e42')['createComponent'](__webpack_require__("6dd0"))
+        })
+    },
+    [['components/cmd-page-body/cmd-page-body-create-component']]
+]);                

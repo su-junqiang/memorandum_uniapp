@@ -1,0 +1,15 @@
+{
+  "navigationBarTitleText": "文件",
+  "enablePullDownRefresh": true,
+  "titleNView": {
+    "buttons": [
+      {
+        "text": "",
+        "fontSrc": "/static/iconfont.ttf",
+        "fontSize": "40",
+        "width": "50px"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

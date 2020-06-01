@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "prompt": "/pages/prompt/prompt",
+    "u-parse": "/components/uParse/src/wxParse"
+  },
+  "component": true
+}

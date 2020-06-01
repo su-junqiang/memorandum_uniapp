@@ -1,0 +1,2 @@
+setCssToHead([".",[1],"body { padding-top: ",[0,118],"; top: var(--status-bar-height); }\n",],undefined,{path:"./pages/index/file.wxss"})();
+document.dispatchEvent(new CustomEvent("generateFuncReady", { detail: { generateFunc: $gwx('./pages/index/file.wxml') } }));

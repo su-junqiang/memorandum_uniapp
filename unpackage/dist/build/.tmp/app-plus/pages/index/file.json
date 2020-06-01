@@ -1,0 +1,30 @@
+{
+  "navigationBarTitleText": "文件",
+  "enablePullDownRefresh": true,
+  "titleNView": {
+    "searchInput": {
+      "align": "center",
+      "backgroundColor": "#F7F7F7",
+      "borderRadius": "5px",
+      "placeholder": "输入关键词",
+      "placeholderColor": "#cccccc",
+      "disabled": false
+    },
+    "buttons": [
+      {
+        "text": "",
+        "fontSrc": "/static/iconfont.ttf",
+        "fontSize": "40",
+        "width": "40px"
+      },
+      {
+        "text": "",
+        "float": "left",
+        "fontSize": "30",
+        "type": "menu",
+        "width": "40px"
+      }
+    ]
+  },
+  "usingComponents": {}
+}

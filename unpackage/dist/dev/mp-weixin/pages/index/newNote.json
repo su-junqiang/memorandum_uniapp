@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "新建笔记",
+  "usingComponents": {
+    "ly-markdown": "/components/ly-markdown/ly-markdown"
+  }
+}

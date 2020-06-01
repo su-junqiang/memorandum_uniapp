@@ -1,0 +1,10 @@
+
+.btn-logout {
+	margin-top: 400rpx;
+	width: 80%;
+	-webkit-border-radius: 50rpx;
+	        border-radius: 50rpx;
+	font-size: 16px;
+}
+
+

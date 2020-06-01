@@ -1,0 +1,37 @@
+{
+  "enablePullDownRefresh": true,
+  "navigationBarTitleText": "最新",
+  "backgroundTextStyle": "dark",
+  "scrollIndicator": "none",
+  "bounce": "all",
+  "titleNView": {
+    "searchInput": {
+      "align": "center",
+      "backgroundColor": "#F7F7F7",
+      "borderRadius": "5px",
+      "placeholder": "输入关键词",
+      "placeholderColor": "#cccccc",
+      "disabled": false
+    },
+    "buttons": [
+      {
+        "text": "",
+        "fontSrc": "/static/iconfont.ttf",
+        "float": "right",
+        "fontSize": "30",
+        "width": "40px"
+      },
+      {
+        "text": "",
+        "float": "left",
+        "fontSize": "30",
+        "type": "menu",
+        "width": "40px"
+      }
+    ]
+  },
+  "usingComponents": {
+    "uni-card": "/components/uni-card/uni-card",
+    "uni-swipe-action": "/components/uni-swipe-action/uni-swipe-action"
+  }
+}

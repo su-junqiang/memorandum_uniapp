@@ -1,0 +1,22 @@
+{
+  "navigationBarTitleText": "首页",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "scrollIndicator": "none",
+  "bounce": "all",
+  "titleNView": {
+    "buttons": [
+      {
+        "text": "",
+        "fontSrc": "/static/iconfont.ttf",
+        "float": "right",
+        "fontSize": "30",
+        "width": "50px"
+      }
+    ]
+  },
+  "usingComponents": {
+    "uni-card": "/components/uni-card/uni-card",
+    "uni-swipe-action": "/components/uni-swipe-action/uni-swipe-action"
+  }
+}
