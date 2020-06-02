@@ -4,73 +4,36 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"enablePullDownRefresh": true,
-				"navigationBarTitleText": "最新",
+				// "enablePullDownRefresh": true,
+				"navigationBarTitleText": "最 新",
 				"onReachBottomDistance": 50,
 				"backgroundTextStyle": "dark",
 				"app-plus": {
-					"pullToRefresh": {
-						"support": true,
-						"color": "#cccccc"
-					},
-					// "scrollIndicator": "none",
-					"bounce": "all",
+					// "pullToRefresh": {
+					// 	"support": true,
+					// 	"color": "#cccccc"
+					// },
+					// "bounce": "all",
 					"titleNView": {
-						// "searchInput": {
-						// 	"align": "left",
-						// 	"backgroundColor": "#F7F7F7",
-						// 	"borderRadius": "10px",
-						// 	"placeholder": "输入关键词",
-						// 	"placeholderColor": "#cccccc",
-						// 	"disabled": false
-						// },
-						// "buttons": [{
-						// 	// 	"text": "\ue67a",
-						// 	// 	"fontSrc": "/static/iconfont.ttf",
-						// 	// 	"float": "right",
-						// 	// 	"fontSize": "30",
-						// 	// 	"width": "40px"
-						// 	// },
-						// 	// {
-						// 	"text": "\ue67a",
-						// 	"float": "right",
-						// 	"fontSize": "30",
-						// 	"type": "menu",
-						// 	"width": "40px"
-						// }]
+						
 					}
 				}
 			}
 		}, {
 			"path": "pages/index/file",
 			"style": {
-				"navigationBarTitleText": "文件",
-				"enablePullDownRefresh": true,
+				"navigationBarTitleText": "文 件",
+				// "enablePullDownRefresh": true,
 				"app-plus": {
-					"pullToRefresh": {
-						"support": true,
-						"color": "#cccccc"
-					},
+					// "pullToRefresh": {
+					// 	"support": true,
+					// 	"color": "#cccccc"
+					// },
 					"titleNView": {
-						// "searchInput": {
-						// 	"align": "left",
-						// 	"backgroundColor": "#F7F7F7",
-						// 	"borderRadius": "10px",
-						// 	"placeholder": "输入关键词",
-						// 	"placeholderColor": "#cccccc",
-						// 	"disabled": false
-						// },
 						"buttons": [{
-							// 	"text": "\ue68b",
-							// 	"fontSrc": "/static/iconfont.ttf",
-							// 	"fontSize": "40",
-							// 	"width": "40px"
-							// },
-							// 	{
-							"text": "\ue67a",
+							"text": "+",
 							"float": "right",
-							"fontSize": "30",
-							"type": "menu",
+							"fontSize": "40",
 							"width": "40px"
 						}]
 					}
@@ -79,7 +42,7 @@
 		}, {
 			"path": "pages/index/mine",
 			"style": {
-				"navigationBarTitleText": "我的",
+				"navigationBarTitleText": "我 的",
 				"app-plus": {
 					"titleNView": false
 				}
@@ -133,11 +96,11 @@
 		}, {
 			"path": "pages/index/mdDetail",
 			"style": {
-				"navigationBarTitleText": "详情",
+				"navigationBarTitleText": "详 情",
 				"app-plus": {
 					"titleNView": {
 						"buttons": [{
-							"text": "编辑",
+							"text": "编 辑",
 							"float": "right",
 							"fontSize": "15",
 							"width": "50px"
@@ -154,7 +117,8 @@
 				}
 			}
 		}
-	],
+	    
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",
 		"navigationBarTitleText": "uni-app",

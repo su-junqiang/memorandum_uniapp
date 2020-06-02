@@ -5,7 +5,6 @@
 				<view class="left-text" :class="'active'" @tap="selectTap(item.id)">
 					<view class="name-tel">
 						{{item.linkMan}} 
-						<!-- <view class="time">{{item.mobile}}</view> -->
 					</view>
 					<view class="address-box">
 						{{item.address}}

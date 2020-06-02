@@ -246,12 +246,12 @@
 	}
 
 	.uni-fab--rightBottom {
-		right: 5px;
+		right: 10px;
 		bottom: 20px;
 		/* #ifdef H5 */
 		bottom: calc(20px + var(--window-bottom));
 		/* #endif */
-		padding: 10px;
+		padding: 30px;
 	}
 
 	.uni-fab--rightTop {
@@ -294,10 +294,10 @@
 	}
 
 	.uni-fab__circle--rightBottom {
-		right: 15px;
-		bottom: 30px;
+		right: 40px;
+		bottom: 50px;
 		/* #ifdef H5 */
-		bottom: calc(30px + var(--window-bottom));
+		bottom: calc(50px + var(--window-bottom));
 		/* #endif */
 	}
 

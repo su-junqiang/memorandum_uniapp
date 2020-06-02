@@ -1,8 +1,11 @@
 <template>
 	<view>
 		<view>
+			<view class="toolbar" style="background-color: #707070;color: white;display:flex; ">
+			<view class="iconfont icon-undo" @click="toolBarClick('undo')" style=" width: 18%;color: white;text-align: right;">返 回</view>
+			<view class="iconfont icon-save" @click="toolBarClick('save')" style="padding-left: 57%; width: 15%;color: white;text-align: right;">保 存</view>
+			</view>
 			<view class="toolbar">
-				<view class="iconfont icon-undo" @click="toolBarClick('undo')"></view>
 				<view class="iconfont icon-bold" @click="toolBarClick('bold')"></view>
 				<view class="iconfont icon-italic" @click="toolBarClick('italic')"></view>
 				<view class="iconfont icon-xiahuaxian1" @click="toolBarClick('header')"></view>
@@ -10,10 +13,6 @@
 				<view class="iconfont icon-strike" @click="toolBarClick('strike')"></view>
 				<view class="iconfont icon-sup" @click="toolBarClick('sup')"></view>
 				<view class="iconfont icon-sub" @click="toolBarClick('sub')"></view>				
-				<view class="iconfont icon-save" @click="toolBarClick('save')"></view>
-		<!-- 		<view class="iconfont icon-alignleft" @click="toolBarClick('alignleft')"></view>
-				<view class="iconfont icon-aligncenter" @click="toolBarClick('aligncenter')"></view>
-				<view class="iconfont icon-alignright" @click="toolBarClick('alignright')"></view> -->
 				<view class="iconfont icon-link" @click="toolBarClick('link')"></view>
 				<view class="iconfont icon-image" @click="toolBarClick('imgage')"></view>
 				<view class="iconfont icon-code" @click="toolBarClick('code')"></view>
@@ -31,13 +30,14 @@
 			</scroll-view>
 		</view>
 		<prompt ref="prompt" @onConfirm="onConfirm" @onCancel="onCancel" title="标题" :value="promptText"></prompt>
-
+<top-to></top-to>
 	</view>
 </template>
 
 <script>
 	let saveStatus = false;
 	let saveLength =0;
+	import topTo from '@/pages/index/top/topTo.vue'
 	import marked from '../marked'
 	import uParse from '@/components/gaoyia-parse/parse.vue'
 	import prompt from '../../pages/prompt/prompt.vue'
@@ -45,6 +45,7 @@
 	export default {
 		name: "ly-markdown",
 		components: {
+			topTo,
 			prompt,
 			uParse
 		},
@@ -273,9 +274,18 @@
 									confirmColor: "#707070",
 									success: res => {
 										if (res.confirm) {
-											uni.navigateBack({
-												delta: 1
-											})
+											if(this.$route.query.file==undefined){
+											setTimeout(() => {
+											 uni.switchTab({
+											 	url: '/pages/index/index'
+											 })
+											}, 100)}else{
+												setTimeout(() => {
+												 uni.switchTab({
+												 	url: '/pages/index/file'
+												 })
+												}, 100)
+											}
 										}
 									}
 								})

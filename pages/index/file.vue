@@ -1,7 +1,7 @@
 <template>
 	<view>
-		<uni-fab :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction" @trigger="trigger"
-		 ref="fab"></uni-fab>
+		<!-- <uni-fab :pattern="pattern" :content="content" :horizontal="horizontal" :vertical="vertical" :direction="direction" @trigger="trigger"
+		 ref="fab"></uni-fab> -->
 		 <folder-list></folder-list>
 		 <file-list></file-list>
 	</view>
