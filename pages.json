@@ -118,6 +118,14 @@
 			}
 		}
 	    
+        ,{
+            "path" : "pages/index/file/folder",
+            "style" : {
+				"navigationBarTitleText": "文件夹",
+				"onReachBottomDistance": 50,
+				"backgroundTextStyle": "dark"
+			}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "white",

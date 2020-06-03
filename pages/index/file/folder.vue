@@ -12,7 +12,7 @@
 				</view>
 				<view class="right-edit"></view>
 			</view>
-		</view>
+		</view>I
 	</view>
 </template>
 
@@ -21,10 +21,12 @@
 	export default {
 		data() {
 			return {
-				noteList: []
+				noteList: [],
+				fileId:'',
 			}
 		},
-		created() {
+		onLoad(payload) {
+			this.fileId = payload.fileId
 			this.getData();
 		},
 		methods: {
@@ -32,11 +34,12 @@
 				uni.navigateTo({
 					url: '/pages/index/mdDetail?note=' + id
 				})
+				// console.log("tap item id:" + JSON.stringify(id));
 			},
 			getData() {
 			const user = uni.getStorageSync('detail');
 			uni.request({
-				url: App.requestIp + `note/selectNoteByFileId/other/${user.account}/0/0`,
+				url: App.requestIp + `note/selectNoteByFileId/${user.account}/${this.fileId}/0/0`,
 				method:"GET",
 				header: {
 					token: uni.getStorageSync('token')

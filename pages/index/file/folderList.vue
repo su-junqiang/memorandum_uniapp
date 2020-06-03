@@ -1,65 +1,57 @@
 <template>
 	<view class="container">
-		<view class="address-list">
-			<view class="a-address" v-for="(item,index) in addressList" :key="index">
-				<view class="left-text" :class="'active'" @tap="selectTap(item.id)">
+		<view class="folder-list">
+			<view class="a-folder" v-for="(item,index) in folderList" :key="index">
+				<view class="left-text" :class="'active'" @tap="selectTap(item.fileId)">
 					<view class="name-tel">
-						{{item.linkMan}} 
-						<!-- <view class="time">{{item.mobile}}</view> -->
+						{{item.fileName}} 
 					</view>
-					<view class="address-box">
-						{{item.mobile}}
+					<view class="folder-box">
+						{{item.fileCreateTime}}
 					</view>
 				</view>
-				<view class="right-edit" @tap="editAddess(item.id)"></view>
+				<view class="right-edit"></view>
 			</view>
 		</view>
-		<view class="bottom-box">
-			<view class="add-btn" @tap="addAddess">新增收货地址</view>
-		</view>
-
 	</view>
 </template>
 
 <script>
+	import App from '../../../App.vue';
 	export default {
 		data() {
 			return {
-				addressList: [{
-						id: 1,
-						linkMan: '计算机考试试题',
-						mobile: '2020.05.18',
-						address: '在计算机组成原理一书中我们说过...'
-					},
-					{
-						id: 2,
-						linkMan: '计算机考试试题',
-						mobile: '2020.05.19',
-						address: '在计算机组成原理一书中我们说过...',
-						isDefault:true
-					},
-					{
-						id: 3,
-						linkMan: '思想教育',
-						mobile: '2020.05.16',
-						address: '在计算机组成原理一书中我们说过...'
-					
-					}
-				]
+				folderList: []
 			}
 		},
-		onLoad() {
-			
+		created() {
+			this.getData();
 		},
 		methods: {
 			selectTap(id) {
-				console.log("tap item id:" + JSON.stringify(id));
+				uni.navigateTo({
+					url: '/pages/index/file/folder?fileId='+ id
+				})
 			},
-			editAddess(id) {
-				console.log("edit item id:" + id);
-			},
-			addAddess() {
-				console.log("tap add new Address");
+			getData() {
+			const user = uni.getStorageSync('detail');
+			uni.request({
+				url: App.requestIp + `file/selectAllFile/${user.account}/0/0`,
+				method:"GET",
+				header: {
+					token: uni.getStorageSync('token')
+				},
+				success: (res) => {
+					if (res.data.status === 200) {
+						this.folderList = res.data.result
+					}else{
+						uni.showToast({title:'获取文件夹列表失败',icon:'none'})
+					}
+				},
+				fail: (rej) => {
+					console.log(rej.data)
+				}
+			})	
 			}
 		}
 	}
@@ -70,14 +62,14 @@
 		background-color: #F2f2f2;
 	}
 
-	.address-list {
+	.folder-list {
 		width: 100%;
 		background-color: #fff;
 		margin-top: 10upx;
 		/* padding-bottom: 50upx; */
 	}
 
-	.address-list .a-address {
+	.folder-list .a-folder {
 		width: 720upx;
 		margin-left: 30upx;
 		display: flex;
@@ -87,33 +79,33 @@
 		border-bottom: 2upx solid #eee;
 	}
 
-	.a-address .left-text {
+	.a-folder .left-text {
 		width: 510upx;
 		box-sizing: border-box;
 		padding-left: 100upx;
 	}
 
-	.a-address .left-text.active {
+	.a-folder .left-text.active {
 		background: url(data:image/jpeg;base64,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) no-repeat left center;
 		background-size: 80upx auto;
 	}
 
-	.a-address .left-text .name-tel {
+	.a-folder .left-text .name-tel {
 		margin-bottom: 20upx;
 	}
-    .a-address .left-text .name-tel .time {
+    .a-folder .left-text .name-tel .time {
 		display: inline;
 		margin-left: 20upx;
     	color:#757575;
 		font-size: 30upx;
     }
-	.a-address .left-text .address-box {
+	.a-folder .left-text .folder-box {
 		font-size: 24upx;
 		color: #888888;
 		line-height: 36upx;
 	}
 
-	.a-address .right-edit {
+	.a-folder .right-edit {
 		width: 109upx;
 		height: 100%;
 		padding: 50upx 0 50upx 58upx;
