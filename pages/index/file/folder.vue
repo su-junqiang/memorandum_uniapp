@@ -12,7 +12,7 @@
 				</view>
 				<view class="right-edit"></view>
 			</view>
-		</view>I
+		</view>
 	</view>
 </template>
 
@@ -26,7 +26,8 @@
 			}
 		},
 		onLoad(payload) {
-			this.fileId = payload.fileId
+			this.fileId = payload.fileId;
+			uni.setNavigationBarTitle({ title:  payload.fileName.slice(0,5)})
 			this.getData();
 		},
 		methods: {
@@ -34,7 +35,6 @@
 				uni.navigateTo({
 					url: '/pages/index/mdDetail?note=' + id
 				})
-				// console.log("tap item id:" + JSON.stringify(id));
 			},
 			getData() {
 			const user = uni.getStorageSync('detail');
@@ -69,9 +69,8 @@
 
 <style>
 	.container {
-		background-color: #F2f2f2;
+		/* background-color: #F2f2f2; */
 	}
-
 	.note-list {
 		width: 100%;
 		background-color: #fff;
