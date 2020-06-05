@@ -35,6 +35,7 @@
 					</uni-swipe-action>
 				</view>
 			</mescroll-body>
+
 		</view>
 	</view>
 </template>
@@ -91,7 +92,8 @@
 			}
 		},
 		onLoad(payload) {
-			this.fileId = payload.fileId
+			this.fileId = payload.fileId;
+			uni.setNavigationBarTitle({ title:  payload.fileName.slice(0,5)})
 			this.getData();
 		},
 		onNavigationBarButtonTap(value) {
@@ -289,7 +291,7 @@
 			upCallback(page) {
 				const user = uni.getStorageSync('detail');
 				uni.request({
-					url: App.requestIp + `note/selectNoteByFileId/${user.account}/${this.fileId}/0/0`,
+					url: App.requestIp + `note/selectNoteByFileId/${user.account}/`+this.fileId+`/0/0`,
 					method: "GET",
 					header: {
 						token: uni.getStorageSync('token')
@@ -372,7 +374,7 @@
 			getData() {
 				const user = uni.getStorageSync('detail');
 				uni.request({
-					url: App.requestIp + `note/selectNoteByFileId/${user.account}/${this.fileId}/0/0`,
+					url: App.requestIp + `note/selectNoteByFileId/${user.account}/`+this.fileId+`/0/0`,
 					method: "GET",
 					header: {
 						token: uni.getStorageSync('token')
@@ -407,9 +409,8 @@
 	}
 
 	.container {
-		background-color: #F2f2f2;
+		/* background-color: #F2f2f2; */
 	}
-
 	.note-list {
 		width: 100%;
 		background-color: #fff;

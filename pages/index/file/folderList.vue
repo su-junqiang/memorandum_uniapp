@@ -9,9 +9,9 @@
 			<view class="a-folder" v-for="(item,index) in folderList" :key="index">
 				<uni-swipe-action>
 					<uni-swipe-action-item :options="options" @click="bindClick" @change="clickNote(item)"  >
-				 <view class="left-text" :class="'active'" @tap="selectTap(item.fileId)">
+				 <view class="left-text" :class="'active'" @tap="selectTap(item)">
 					<view class="name-tel">
-						{{item.fileName}} 
+						{{item.fileName.length > 8 ? item.fileName.slice(0,8) + '......' :item.fileName}}
 					</view>
 					<view class="folder-box">
 						{{item.fileCreateTime}}
@@ -130,9 +130,9 @@
 			        this.showCancle=true;
 				}
 			},
-			selectTap(id) {
+		selectTap(item) {
 				uni.navigateTo({
-					url: '/pages/index/file/folder?fileId='+ id
+					url: '/pages/index/file/folder?fileId='+ item.fileId + '&fileName=' + item.fileName
 				})
 			},
 			getData() {
