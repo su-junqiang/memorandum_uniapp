@@ -1,33 +1,135 @@
 <template>
 	<view class="container">
+		<clxDialog :title='title' :isShow='show' @dialogConfirm='dialogConfirm' @dialogCancel='dialogCancel' >
+					  <input style="background-color: #ECECEC;" class="dialogContent" placeholder='点击输入' type="text" @input="_input" v-model="dialogContent" />
+		</clxDialog>
+		<clxDialog title='如果删除将删除该文件夹下所有文件' :isShow='showCancle' @dialogConfirm='dialogConfirm1' @dialogCancel='dialogCancel' >
+		</clxDialog>
 		<view class="folder-list">
 			<view class="a-folder" v-for="(item,index) in folderList" :key="index">
-				<view class="left-text" :class="'active'" @tap="selectTap(item.fileId)">
+				<uni-swipe-action>
+					<uni-swipe-action-item :options="options" @click="bindClick" @change="clickNote(item)"  >
+				 <view class="left-text" :class="'active'" @tap="selectTap(item.fileId)">
 					<view class="name-tel">
 						{{item.fileName}} 
 					</view>
 					<view class="folder-box">
 						{{item.fileCreateTime}}
 					</view>
+					<!-- <view class="right-edit" @click="selectTap(item.fileId)"></view> -->
 				</view>
-				<view class="right-edit"></view>
+				</uni-swipe-action-item>
+				</uni-swipe-action>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import clxDialog from '@/components/clx-dialog/clx-dialog.vue';
 	import App from '../../../App.vue';
+	import uniSwipeAction from "@/components/uni-swipe-action/uni-swipe-action.vue"
+	import uniSwipeActionItem from '@/components/uni-swipe-action-item/uni-swipe-action-item.vue'
 	export default {
+		components: {
+			clxDialog,
+			uniSwipeAction,
+			uniSwipeActionItem	},
 		data() {
 			return {
-				folderList: []
+				showCancle:false,
+				
+				fileId:'',
+				folderList: [],
+				options: [{
+					text: '编辑',
+					style: {
+						backgroundColor: '#707070'
+					}
+				},{
+					text: '删除',
+					style: {
+						backgroundColor: '#dd524d'
+					}
+				}],title: '输入文件名称',
+				show: false,
+				dialogContent:''
 			}
 		},
 		created() {
 			this.getData();
 		},
 		methods: {
+			clickShow() {
+				this.show = true
+			},
+			dialogConfirm1(){
+				const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `file/deleteFileByAccount/${user.account}/${this.fileId}`,
+					method:"DELETE",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					success: (res) => {
+						if (res.data.status === 200) {
+							uni.showToast({title:'删除成功',icon:'none'})
+							this.folderList.splice(this.folderList.findIndex(item => item.fileId === this.fileId), 1)
+							
+						}else{
+							uni.showToast({title:'删除失败',icon:'none'})
+						}
+					},
+					fail: (rej) => {
+						console.log(rej.data)
+					}
+				})	
+				this.showCancle=false
+			},
+			dialogConfirm() {
+				const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `file/fileRename`,
+					method:"PUT",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					data:{
+						fileId:this.fileId,
+						fileNewName:this.dialogContent
+					},
+					success: (res) => {
+						if (res.data.status === 200) {
+							uni.showToast({title:'修改成功',icon:'none'})
+							this.dialogContent=''
+							location.reload()
+						}else{
+							uni.showToast({title:'修改失败',icon:'none'})
+						}
+					},
+					fail: (rej) => {
+						console.log(rej.data)
+					}
+				})	
+				this.show = false
+			},
+			dialogCancel() {
+				this.show = false
+				this.showCancle=false
+			},
+			clickNote(item) {
+				this.fileId = item.fileId
+				this.dialogContent=item.fileName
+			},
+			bindClick(value) {
+			
+				console.log(value)
+				if (value.index == 0) {
+				    this.clickShow()
+				} else {
+			        this.showCancle=true;
+				}
+			},
 			selectTap(id) {
 				uni.navigateTo({
 					url: '/pages/index/file/folder?fileId='+ id
@@ -105,10 +207,11 @@
 		line-height: 36upx;
 	}
 
-	.a-folder .right-edit {
+	.a-folder .left-text .right-edit {
 		width: 109upx;
+        /* margin-left: 60px; */
 		height: 100%;
-		padding: 50upx 0 50upx 58upx;
+		margin-left: 50px;
 		box-sizing: border-box;
 		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAASCAYAAACNdSR1AAAAAXNSR0IArs4c6QAAAMhJREFUKBWNksENwjAMRf2tTsESwAJdoMzAoWIBJA6IARAHRkAcmIGKexcAlugYMXGiRLRq2vxLUvl959cymvazN2IORPzYlMsTAKGE2IFCCxJzbNr3TUSQYIm1YyiKUD1lgHbyANXBBNC9Kte7YST3ZK4h5ssxRFgjzBl68Kwh/NT/OfYCAZUdXb6KITrW1Y9y9eplToN+5hGeAzWBg3NAB+eCChfP9nsmu0D6oUrthdbs6MxWL6opUOvM4KtN3hH4MrZpCgX9ALygoufgx5aQAAAAAElFTkSuQmCC) no-repeat 43upx center;
 		background-size: 15upx auto;

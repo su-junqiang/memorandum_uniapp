@@ -1,53 +1,310 @@
 <template>
 	<view class="container">
-		<view class="note-list">
-			<view class="a-note" v-for="(item,index) in noteList" :key="index">
-				<view class="left-text" :class="'active'" @tap="selectTap(item.noteId)">
-					<view class="name-tel">
-						{{item.noteTitle.length > 8 ? item.noteTitle.slice(0,8) + '......' :item.noteTitle}} 
-					</view>
-					<view class="note-box">
-						{{item.createTime}}
+		<top-to></top-to>
+		<clxDialog :title='title' :isShow='show' @dialogConfirm='dialogConfirm' @dialogCancel='dialogCancel' style='overflow:visible'>
+			<view class="note-list" style="width: 100%; height: 500upx;overflow: scroll;">
+
+				<view class="fileName" style="border-bottom: 2upx solid #eee;" v-for="(item,index) in candidates" :key="index">
+					<view class="name-tel" style="height: 80upx; width: 100%;" @click="clickFile(item.fileId)">
+						{{item.fileName}}
 					</view>
 				</view>
-				<view class="right-edit"></view>
 			</view>
-		</view>I
+		</clxDialog>
+		<clxDialog title='标题名称' :isShow='noteShow' @dialogConfirm='dialogConfirm1' @dialogCancel='dialogCancel1'>
+			<input style="background-color: #ECECEC;" class="dialogContent" placeholder='点击输入' type="text" @input="_input"
+			 v-model="dialogContent1" />
+		</clxDialog>
+		<view class="note-list">
+			<mescroll-body ref="mescrollRef" @down="downCallback" @up="upCallback" :up="upOption">
+				<view v-show="kong" style="color: red; position:absolut;  text-align:center;width:100% ;height:500px;background-color: white; "><img
+					 src="../../../static/icon/kong.png" style="left:30%;width:40%;height:40%"></img><br>数据为空</view>
+				<view class="a-note" v-for="(item,index) in noteList" :key="index">
+					<uni-swipe-action>
+						<uni-swipe-action-item :options="options" @click="bindClick" @change="clickNote(item.noteId)">
+							<view class="left-text" :class="'active'" @tap="selectTap(item.noteId)">
+								<view class="name-tel">
+									{{item.noteTitle.length > 8 ? item.noteTitle.slice(0,8) + '......' :item.noteTitle}}
+								</view>
+								<view class="note-box">
+									{{item.createTime}}
+								</view>
+							</view>
+							<!-- <view class="right-edit" @click="selectTap(item.noteId)"></view> -->
+						</uni-swipe-action-item>
+					</uni-swipe-action>
+				</view>
+			</mescroll-body>
+		</view>
 	</view>
 </template>
 
 <script>
+	import MescrollMixin from "@/components/mescroll-uni/mescroll-mixins.js";
+	import MescrollBody from "@/components/mescroll-uni/mescroll-body.vue"; // 注意.vue后缀不能省
 	import App from '../../../App.vue';
+	import clxDialog from '@/components/clx-dialog/clx-dialog.vue';
+	import topTo from '@/pages/index/top/topTo.vue'
+	import uniSwipeAction from "@/components/uni-swipe-action/uni-swipe-action.vue"
+	import uniSwipeActionItem from '@/components/uni-swipe-action-item/uni-swipe-action-item.vue'
 	export default {
+		mixins: [MescrollMixin],
+		components: {
+			MescrollBody,
+			clxDialog,
+			topTo,
+			uniSwipeAction,
+			uniSwipeActionItem
+		},
 		data() {
 			return {
+				upOption: {
+					page: {
+						size: 10 // 每页数据的数量,默认10
+					},
+					noMoreSize: 5, // 配置列表的总数量要大于等于5条才显示'-- END --'的提示
+					empty: {
+						tip: '暂无相关数据'
+					}
+				},
+				kong: false,
 				noteList: [],
-				fileId:'',
+				candidates: [],
+				fileId: '',
+				noteId: '',
+				options: [{
+					text: '移动',
+					style: {
+						backgroundColor: '#707070'
+					}
+				}, {
+					text: '删除',
+					style: {
+						backgroundColor: '#dd524d'
+					}
+				}],
+				title: '选择文件',
+				show: false,
+				dialogContent: '',
+				dialogContent1: '',
+				noteShow: false
 			}
 		},
 		onLoad(payload) {
 			this.fileId = payload.fileId
 			this.getData();
 		},
+		onNavigationBarButtonTap(value) {
+			if (value.float == "right") {
+				this.noteShow = true
+
+			} else {
+				console.log("caidan")
+			}
+		},
 		methods: {
-			selectTap(id) {
-				uni.navigateTo({
-					url: '/pages/index/mdDetail?note=' + id
+			getfile() {
+				const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `file/selectAllFile/${user.account}/0/0`,
+					method: "GET",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					success: (res) => {
+						if (res.data.status === 200) {
+							this.candidates = res.data.result
+						} else {
+							uni.showToast({
+								title: '获取文件夹列表失败',
+								icon: 'none'
+							})
+						}
+					},
+					fail: (rej) => {
+						console.log(rej.data)
+					}
 				})
-				// console.log("tap item id:" + JSON.stringify(id));
 			},
-			getData() {
-			const user = uni.getStorageSync('detail');
-			uni.request({
-				url: App.requestIp + `note/selectNoteByFileId/${user.account}/${this.fileId}/0/0`,
-				method:"GET",
-				header: {
-					token: uni.getStorageSync('token')
-				},
-				success: (res) => {
-					if (res.data.status === 200) {
-						this.noteList = res.data.result.map(function(item){
-							const note =  {};
+			clickFile(fileId) {
+				this.fileId = fileId
+			},
+			clickShow() {
+				this.show = true
+			},
+			dialogConfirm1() {
+				const user = uni.getStorageSync('detail');
+				if(this.dialogContent1!=''&&this.dialogContent1.length>0){
+				let datas = {
+					noteUserAccount: user.account,
+					noteTitle: this.dialogContent1,
+					noteUrl: "",
+					noteType: "md文件",
+				};
+				uni.request({
+					url: App.requestIp + `note/newBuiltNoteReplace1`,
+					method: "POST",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					data: datas,
+					success: (res) => {
+						if (res.data.status === 200) {
+							uni.request({
+								url: App.requestIp + `file/insertNoteToFile/1`,
+								method: "POST",
+								header: {
+									token: uni.getStorageSync('token')
+								},
+								data: {
+									fileId: this.$route.query.fileId,
+									noteId: res.data.msg
+								},
+								success: (res) => {
+									if (res.data.status === 200) {
+										uni.showToast({
+											title: '操作成功',
+											icon: 'none'
+										}) 
+										this.dialogContent1=''
+										datas["noteId"] = res.data.msg
+										datas["createTime"]= this.getNowFormatDate()
+										this.noteList.push(datas)
+										this.kong=false
+									} else {
+										uni.showToast({
+											title: '操作失败',
+											icon: 'none'
+										})
+									}
+								},
+								fail: (rej) => {
+									uni.showToast({
+										title: '操作失败',
+										icon: 'none'
+									})
+									console.log(rej.data)
+								}
+							})
+
+						} else {
+							uni.showToast({
+								title: '操作失败',
+								icon: 'none'
+							})
+						}
+					},
+					fail: (rej) => {
+						uni.showToast({
+							title: '操作失败',
+							icon: 'none'
+						})
+						console.log(rej.data)
+					},
+					
+				});
+				
+				}else{
+					uni.showToast({
+						title: '笔记名称不能为空',
+						icon: 'none'
+					})
+				}
+           this.noteShow = false
+			},
+			getNowFormatDate() {
+			    var date = new Date();
+			    var seperator1 = "-";
+			    var seperator2 = ":";
+			    var year = date.getFullYear();
+			    var month = date.getMonth() + 1;
+			    var strDate = date.getDate();
+			    if (month >= 1 && month <= 9) {
+			        month = "0" + month;
+			    }
+			    if (strDate >= 0 && strDate <= 9) {
+			        strDate = "0" + strDate;
+			    }
+			    var currentdate = year + seperator1 + month + seperator1 + strDate
+			            + " " + date.getHours() + seperator2 + date.getMinutes()
+			            + seperator2 + date.getSeconds();
+			    return currentdate;
+			},
+			dialogCancel1() {
+				this.noteShow = false
+			},
+			dialogConfirm() {
+				this.show = false
+				console.log(this.fileId)
+				const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `file/insertNoteToFile/2`,
+					method: "POST",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					data: {
+						fileId: this.fileId,
+						noteId: this.noteId
+					},
+					success: (res) => {
+						if (res.data.status === 200) {
+							uni.showToast({
+								title: '操作成功',
+								icon: 'none'
+							})
+							if (this.fileId != this.$route.query.fileId) {
+								this.noteList.splice(this.noteList.findIndex(item => item.noteId === this.noteId), 1)
+							}
+						} else {
+							uni.showToast({
+								title: '操作失败',
+								icon: 'none'
+							})
+						}
+					},
+					fail: (rej) => {
+						uni.showToast({
+							title: '操作失败',
+							icon: 'none'
+						})
+						console.log(rej.data)
+					}
+				})
+			},
+			dialogCancel() {
+				this.show = false
+			},
+			clickNote(noteId) {
+				this.noteId = noteId
+			},
+			downCallback(page) {
+
+				// 第1种: 下拉刷新和上拉加载调同样的接口, 那么不用第1种方式, 直接mescroll.resetUpScroll()即可
+				this.upCallback(page); // 重置列表为第一页 (自动执行 page.num=1, 再触发upCallback方法 )
+				// 第2种: 下拉刷新什么也不处理, 可直接调用或者延时一会调用 mescroll.endSuccess() 结束即可
+				// this.mescroll.endSuccess()
+			},
+			/*上拉加载的回调*/
+			upCallback(page) {
+				const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `note/selectNoteByFileId/${user.account}/${this.fileId}/0/0`,
+					method: "GET",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					success: (res) => {
+						let curPageData = res.data.result;
+						// 接口返回的当前页数据长度 (如列表有26个数据,当前页返回8个,则curPageLen=8)
+						let curPageLen = curPageData.length;
+						// 接口返回的总数据量(如列表有26个数据,每页10条,共3页; 则totalSize=26)
+						let totalSize = res.data.total;
+						console.log(curPageData, curPageLen, totalSize)
+						//设置列表数据
+						if (page.num == 1) this.artList = []; //如果是第一页需手动置空列表
+						this.noteList = res.data.result.map(function(item) {
+							const note = {};
 							note.noteId = item.note.noteId;
 							note.noteTitle = item.note.noteTitle;
 							note.createTime = item.note.createTime;
@@ -56,18 +313,99 @@
 							note.noteUrl = item.note.noteUrl;
 							return note;
 						})
+						this.mescroll.endSuccess(curPageLen, false)
+					},
+					fail: () => {
+						//  请求失败,隐藏加载状态
+						this.mescroll.endErr()
 					}
-				},
-				fail: (rej) => {
-					console.log(rej.data)
+				})
+			},
+			bindClick(value) {
+				console.log(value)
+				if (value.index == 0) {
+					this.getfile()
+					this.clickShow()
+				} else {
+					const user = uni.getStorageSync('detail');
+					uni.request({
+						url: App.requestIp + `recycle/updateNoteStatus/1`,
+						method: "PUT",
+						header: {
+							token: uni.getStorageSync('token')
+						},
+						data: {
+							account: user.account,
+							noteId: this.noteId
+						},
+						success: (res) => {
+							if (res.data.status === 200) {
+								uni.showToast({
+									title: '删除成功',
+									icon: 'none'
+								})
+								this.noteList.splice(this.noteList.findIndex(item => item.noteId === this.noteId), 1)
+							} else {
+								uni.showToast({
+									title: '删除失败',
+									icon: 'none'
+								})
+							}
+						},
+						fail: (rej) => {
+							uni.showToast({
+								title: '删除失败',
+								icon: 'none'
+							})
+							console.log(rej.data)
+						}
+					})
+
 				}
-			})	
-		  }
+			},
+			selectTap(id) {
+				uni.navigateTo({
+					url: '/pages/index/mdDetail?file=' + this.fileId + '&note=' + id
+				})
+				// console.log("tap item id:" + JSON.stringify(id));
+			},
+			getData() {
+				const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `note/selectNoteByFileId/${user.account}/${this.fileId}/0/0`,
+					method: "GET",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					success: (res) => {
+						if (res.data.result.length > 0) {
+							this.noteList = res.data.result.map(function(item) {
+								const note = {};
+								note.noteId = item.note.noteId;
+								note.noteTitle = item.note.noteTitle;
+								note.createTime = item.note.createTime;
+								note.updateTime = item.note.updateTime;
+								note.noteKeyWords = item.note.noteKeyWords;
+								note.noteUrl = item.note.noteUrl;
+								return note;
+							})
+						}
+					},
+					fail: (rej) => {
+						this.kong = true
+						console.log(rej.data)
+					}
+				})
+			}
 		}
 	}
 </script>
 
 <style>
+	.fileName:hover {
+		background-color: #C0C0C0;
+	}
+
 	.container {
 		background-color: #F2f2f2;
 	}
@@ -103,12 +441,14 @@
 	.a-note .left-text .name-tel {
 		margin-bottom: 20upx;
 	}
-    .a-note .left-text .name-tel .time {
+
+	.a-note .left-text .name-tel .time {
 		display: inline;
 		margin-left: 20upx;
-    	color:#757575;
+		color: #757575;
 		font-size: 30upx;
-    }
+	}
+
 	.a-note .left-text .note-box {
 		font-size: 24upx;
 		color: #888888;
@@ -118,12 +458,13 @@
 	.a-note .right-edit {
 		width: 109upx;
 		height: 100%;
+		margin-left: 50px;
 		padding: 50upx 0 50upx 58upx;
 		box-sizing: border-box;
 		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAAAXNSR0IArs4c6QAABPhJREFUeAHtnE1oE0EUx80HQW39SCvYgBVBqhUU+l1FD1ZFPIgnQdDiRfGmh168eBDR4k1B8OLHSVTQg6gnUQ+CaNLWQGu8lSqtrZQKgk1jkzb1/zSzvKyTIO0mM7uZgc28eftm571fZnaTzGR8y4qkRCJRPTMzswsmG3HULiwsBIqYO3bK5/PNoa1oR0fHG8cuWuBCIyMjyycnJy+hzW6YIPPdr6uru1BfX5+iKj57PTjm6+vrOwz9WchdyIN2mzKWL3R2dl4pVXujo6MrJiYmniHO/bwNQLqFN+cM6fIA9ff3b85ms7dRYS+voFCehqNr4HDWaR8KwaF20F4mHA6vamhomLV6RzQabZufn3+B82GnnVnC9RaWULdg1WJwcpWCYBGC/BcQ4GxB4RWO1TkDLTK8k71O957/gEOxv25sbPxJQhDDyR+Lxe5ALgRnEE4OwG7Y7/enqVIZ0hzaiLW3t791si2CMz4+/hzX3FfkumPBYPCUOB/EDfkgCnuEQuSAMoSjB06+FDo356LnIIaicAKBwN6WlpYvIlbqQSdFQeQAk4C+CzfI70Ln5lzAQUx5TytbTGMEp62tbZjrg4DRiopctwxD6RQMKx4OQfEDDn0ItBKAzba2tsYshYuFpfQcEbYfwnJRyOUpQMrvUjYDNxSdgENxEiDPJafgEBjPAXISjucAOQ3HU4BKAcczgEoFxxOASgnH9YBKDcfVgMoBx7WAygWHAFk/mFHBDYng/M9PFrIvnouJz1UfFMsNh4C6BpAKOK4BpAqOKwCphKM9INVwtAakAxxtAekCR0tAOsHRDpBucLQCpCMcbQDpCocAKf8upgOcoaGh9VgHdRrzgTSRehcTpqMEh5LSrxq0eKmcXzz/hpz/Go/H1wJOP7SXsfTnIvI41irUCSulgKampsihfcIZSS6dDpbYLVqVyWRosdgGcQH0oFrMCx4VZaWA4Mxx4YgkLzmcXJu19rbRk9YJnVJAcKLQDG654AgOBXOlgNCD7kk80wYO+aYUUE1NzSU8OW7Aj18Y97QO8QV+CdxtX4JCjqpKSh/ztEgSgZ9DT+oZGBgIAcyMKhCF2lUKSDiF3kNL7ujQLikdYtrRkDhkAEmgcJUBxGlIZANIAoWrDCBOQyIbQBIoXGUAcRoS2QCSQOEqA4jTkMgGkAQKVxlAnIZENoAkULjKAOI0JLIBJIHCVQYQpyGRDSAJFK4ygDgNiWwASaBwlQHEaUhkA0gChav8uekWS4cZhoqChngDVvA5gTMhGN9sBqsHBwd12p7C5p6zRcDI+1Nz7uo/RCv0r+e8/4nTiVQq1S0MKiDfbo8RTCaEjobYU1FgeW9uPw+m8p6IXSe2IiraAigvgcl7ofCHQqEHUNAMJ0/VKDzBdjmNXOklGZtHhdBTruOw33M/5S2gampq+orAr0mC34YtYj6gJ53nC4okdq5T0eiYnp6mjZUO2Z3HWoGbXPdngyXaiiuZTL5DhX/GozBGL0tCzoiyi3PqOStl/iPG4UgkskNsz0U21g5UWIq2KZ1O09hbL6vsdR3g0Jt/AMPrDY/VGn/Nzc2fcT/aCcOP3KBC5Hn0qhN2OBS7BYgKBKmqqmoXIF1F8c8ucKT3cqJhhWM/NpN7JIvTGmL2k3iCRUD1GNbrHcG5BhwRHP986rTX070MGBnENQ4/E7ghP8SWgI/5Pcfu/2//c4lF4CDN7wAAAABJRU5ErkJggg==) no-repeat 43upx center;
 		background-size: 35upx auto;
 	}
-	
+
 	.bottom-box {
 		position: fixed;
 		width: 100%;

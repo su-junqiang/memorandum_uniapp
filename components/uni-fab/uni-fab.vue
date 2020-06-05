@@ -158,10 +158,20 @@
 			}
 		},
 		watch: {
+			$route(to,form){
+				console.log(to)
+				if(to.path!=="/"||to.path!=="/pages/index/file"){
+					this.close()
+				}
+			},
 			pattern(newValue, oldValue) {
 				//console.log(JSON.stringify(newValue))
 				this.styles = Object.assign({}, this.styles, newValue)
 			}
+		},
+		mounted() {
+			// let routes = getCurrentPages();
+			// console.log(routes[routes.length - 1].route)
 		},
 		created() {
 			this.isShow = this.show
@@ -193,6 +203,7 @@
 					index,
 					item
 				})
+				this.close()
 			},
 			/**
 			 * 获取 位置信息
@@ -246,12 +257,11 @@
 	}
 
 	.uni-fab--rightBottom {
-		right: 10px;
-		bottom: 20px;
+		right: 60px;
+		bottom: 70px;
 		/* #ifdef H5 */
-		bottom: calc(20px + var(--window-bottom));
+		bottom: calc(70px + var(--window-bottom));
 		/* #endif */
-		padding: 30px;
 	}
 
 	.uni-fab--rightTop {
@@ -294,10 +304,10 @@
 	}
 
 	.uni-fab__circle--rightBottom {
-		right: 40px;
-		bottom: 50px;
+		right: 60px;
+		bottom: 70px;
 		/* #ifdef H5 */
-		bottom: calc(50px + var(--window-bottom));
+		bottom: calc(70px + var(--window-bottom));
 		/* #endif */
 	}
 

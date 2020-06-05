@@ -64,7 +64,7 @@
 			},
 			handleScroll () { //改变元素#searchBar的top值
 			    var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
-			   if(scrollTop>10){
+			   if(scrollTop>100){
 				  this.isShowToTop=true;
 			   }else{
 				   this.isShowToTop=false;

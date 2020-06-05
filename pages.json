@@ -22,22 +22,22 @@
 		}, {
 			"path": "pages/index/file",
 			"style": {
-				"navigationBarTitleText": "文 件",
+				"navigationBarTitleText": "文 件"
 				// "enablePullDownRefresh": true,
-				"app-plus": {
-					// "pullToRefresh": {
-					// 	"support": true,
-					// 	"color": "#cccccc"
-					// },
-					"titleNView": {
-						"buttons": [{
-							"text": "+",
-							"float": "right",
-							"fontSize": "40",
-							"width": "40px"
-						}]
-					}
-				}
+				// "app-plus": {
+				// 	// "pullToRefresh": {
+				// 	// 	"support": true,
+				// 	// 	"color": "#cccccc"
+				// 	// },
+				// 	"titleNView": {
+				// 		"buttons": [{
+				// 			"text": "+",
+				// 			"float": "right",
+				// 			"fontSize": "40",
+				// 			"width": "40px"
+				// 		}]
+				// 	}
+				// }
 			}
 		}, {
 			"path": "pages/index/mine",
@@ -116,6 +116,13 @@
 				"titleNView": false
 				}
 			}
+		},{
+			"path": "pages/index/top/topTo",
+			"style": {
+				"app-plus": {
+				"titleNView": false
+				}
+			}
 		}
 	    
         ,{
@@ -123,8 +130,26 @@
             "style" : {
 				"navigationBarTitleText": "文件夹",
 				"onReachBottomDistance": 50,
-				"backgroundTextStyle": "dark"
+				"backgroundTextStyle": "dark",
+				"app-plus": {
+					// "pullToRefresh": {
+					// 	"support": true,
+					// 	"color": "#cccccc"
+					// },
+					"titleNView": {
+						"buttons": [{
+							"text": "+",
+							"float": "right",
+							"fontSize": "40",
+							"width": "40px"
+						}]
+					}
+				}
 			}
+        }
+        ,{
+            "path" : "pages/index/fab/fab",
+            "style" : {}
         }
     ],
 	"globalStyle": {

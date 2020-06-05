@@ -274,18 +274,21 @@
 									confirmColor: "#707070",
 									success: res => {
 										if (res.confirm) {
-											if(this.$route.query.file==undefined){
-											setTimeout(() => {
-											 uni.switchTab({
-											 	url: '/pages/index/index'
-											 })
-											}, 100)}else{
-												setTimeout(() => {
-												 uni.switchTab({
-												 	url: '/pages/index/file'
-												 })
-												}, 100)
-											}
+											// if(this.$route.query.file==undefined){
+											// setTimeout(() => {
+											//  uni.switchTab({
+											//  	url: '/pages/index/index'
+											//  })
+											// }, 100)}else{
+											// 	setTimeout(() => {
+											// 	 uni.switchTab({
+											// 	 	url: '/pages/index/file'
+											// 	 })
+											// 	}, 100)
+											// }
+											uni.navigateBack({
+												delta:1
+											})
 										}
 									}
 								})

@@ -1,70 +1,227 @@
 <template>
 	<view class="container">
-		<view class="note-list">
-			<view class="a-note" v-for="(item,index) in noteList" :key="index">
-				<view class="left-text" :class="'active'" @tap="selectTap(item.noteId)">
-					<view class="name-tel">
-						{{item.noteTitle.length > 8 ? item.noteTitle.slice(0,8) + '......' :item.noteTitle}} 
-					</view>
-					<view class="note-box">
-						{{item.createTime}}
+		<clxDialog :title='title' :isShow='show' @dialogConfirm='dialogConfirm' @dialogCancel='dialogCancel' style='overflow:visible'>
+			<view class="note-list" style="width: 100%; height: 500upx;overflow: scroll;" >
+				<view class="fileName" style="border-bottom: 2upx solid #eee;" v-for="(item,index) in candidates" :key="index">
+					<view class="name-tel" style="height: 80upx; width: 100%;" @click="clickFile(item.fileId)">
+						{{item.fileName}}
 					</view>
 				</view>
-				<view class="right-edit"></view>
 			</view>
+		</clxDialog>
+		<view class="note-list">
+			<view class="a-note" v-for="(item,index) in noteList" :key="index">
+				<uni-swipe-action>
+					<uni-swipe-action-item :options="options" @click="bindClick" @change="clickNote(item.noteId)">
+						<view class="left-text" :class="'active'" @tap="selectTap(item.noteId)">
+							<view class="name-tel">
+								{{item.noteTitle.length > 8 ? item.noteTitle.slice(0,8) + '......' :item.noteTitle}}
+							</view>
+							<view class="note-box">
+								{{item.createTime}}
+							</view>
+						</view>
+						<!-- <view class="right-edit" @click="selectTap(item.noteId)"></view> -->
+					</uni-swipe-action-item>
+				</uni-swipe-action>
+			</view>
+
 		</view>
 	</view>
 </template>
 
 <script>
+	import uniCombox from "@/components/uni-combox/uni-combox"
+	import clxDialog from '@/components/clx-dialog/clx-dialog.vue';
 	import App from '../../../App.vue';
+	import uniSwipeAction from "@/components/uni-swipe-action/uni-swipe-action.vue"
+	import uniSwipeActionItem from '@/components/uni-swipe-action-item/uni-swipe-action-item.vue'
 	export default {
+		components: {
+			uniCombox,
+			clxDialog,
+			uniSwipeAction,
+			uniSwipeActionItem,
+		},
 		data() {
 			return {
-				noteList: []
+				candidates: [],
+				fileId: '',
+				noteId: '',
+				noteList: [],
+				options: [{
+					text: '移动',
+					style: {
+						backgroundColor: '#707070'
+					}
+				}, {
+					text: '删除',
+					style: {
+						backgroundColor: '#dd524d'
+					}
+				}],
+				title: '输入文件名称',
+				show: false,
+				dialogContent: ''
 			}
 		},
 		created() {
 			this.getData();
 		},
 		methods: {
+			clickShow() {
+				this.show = true
+			},
+			dialogConfirm() {
+				this.show = false
+				console.log(this.fileId)
+				const user = uni.getStorageSync('detail');
+								uni.request({
+									url: App.requestIp + `file/insertNoteToFile/1`,
+									method: "POST",
+									header: {
+										token: uni.getStorageSync('token')
+									},
+									data:{
+										 fileId: this.fileId,
+										  noteId: this.noteId
+									},
+									success: (res) => {
+										if (res.data.status === 200) {
+											uni.showToast({
+												title: '操作成功',
+												icon: 'none'
+											})
+											this.noteList.splice(this.noteList.findIndex(item => item.noteId === this.noteId), 1)
+										} else {
+											uni.showToast({
+												title: '操作失败',
+												icon: 'none'
+											})
+										}
+									},
+									fail: (rej) => {
+										uni.showToast({
+											title: '操作失败',
+											icon: 'none'
+										})
+										console.log(rej.data)
+									}
+								})
+			},
+			dialogCancel() {
+				this.show = false
+			},
+			clickNote(noteId) {
+				this.noteId = noteId
+			},
+			clickFile(fileId){
+				this.fileId=fileId
+			},
+			bindClick(value) {
+				console.log(value)
+				if (value.index == 0) {
+					this.getfile()
+					this.clickShow()
+				} else {
+               const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `recycle/updateNoteStatus/1`,
+					method: "PUT",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					data:{
+						 account: user.account,
+						  noteId: this.noteId
+					},
+					success: (res) => {
+						if (res.data.status === 200) {
+							uni.showToast({
+								title: '删除成功',
+								icon: 'none'
+							})
+							this.noteList.splice(this.noteList.findIndex(item => item.noteId === this.noteId), 1)
+						} else {
+							uni.showToast({
+								title: '删除失败',
+								icon: 'none'
+							})
+						}
+					},
+					fail: (rej) => {
+						uni.showToast({
+							title: '删除失败',
+							icon: 'none'
+						})
+						console.log(rej.data)
+					}
+				})
+				}
+			},
+			getfile() {
+				const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `file/selectAllFile/${user.account}/0/0`,
+					method: "GET",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					success: (res) => {
+						if (res.data.status === 200) {
+							this.candidates = res.data.result
+						} else {
+							uni.showToast({
+								title: '获取文件夹列表失败',
+								icon: 'none'
+							})
+						}
+					},
+					fail: (rej) => {
+						console.log(rej.data)
+					}
+				})
+			},
 			selectTap(id) {
 				uni.navigateTo({
-					url: '/pages/index/mdDetail?note=' + id
+					url: '/pages/index/mdDetail?file=' + 0 + '&note=' + id
 				})
 			},
 			getData() {
-			const user = uni.getStorageSync('detail');
-			uni.request({
-				url: App.requestIp + `note/selectNoteByFileId/other/${user.account}/0/0`,
-				method:"GET",
-				header: {
-					token: uni.getStorageSync('token')
-				},
-				success: (res) => {
-					if (res.data.status === 200) {
-						this.noteList = res.data.result.map(function(item){
-							const note =  {};
-							note.noteId = item.note.noteId;
-							note.noteTitle = item.note.noteTitle;
-							note.createTime = item.note.createTime;
-							note.updateTime = item.note.updateTime;
-							note.noteKeyWords = item.note.noteKeyWords;
-							note.noteUrl = item.note.noteUrl;
-							return note;
-						})
+				const user = uni.getStorageSync('detail');
+				uni.request({
+					url: App.requestIp + `note/selectNoteByFileId/other/${user.account}/0/0`,
+					method: "GET",
+					header: {
+						token: uni.getStorageSync('token')
+					},
+					success: (res) => {
+						if (res.data.status === 200) {
+							this.noteList = res.data.result.map(function(item) {
+								const note = {};
+								note.noteId = item.note.noteId;
+								note.noteTitle = item.note.noteTitle;
+								note.createTime = item.note.createTime;
+								note.updateTime = item.note.updateTime;
+								note.noteKeyWords = item.note.noteKeyWords;
+								note.noteUrl = item.note.noteUrl;
+								return note;
+							})
+						}
+					},
+					fail: (rej) => {
+						console.log(rej.data)
 					}
-				},
-				fail: (rej) => {
-					console.log(rej.data)
-				}
-			})	
-		  }
+				})
+			}
 		}
 	}
 </script>
 
 <style>
+	.fileName:hover{
+		background-color: #C0C0C0;
+	}
 	.container {
 		background-color: #F2f2f2;
 	}
@@ -100,12 +257,14 @@
 	.a-note .left-text .name-tel {
 		margin-bottom: 20upx;
 	}
-    .a-note .left-text .name-tel .time {
+
+	.a-note .left-text .name-tel .time {
 		display: inline;
 		margin-left: 20upx;
-    	color:#757575;
+		color: #757575;
 		font-size: 30upx;
-    }
+	}
+
 	.a-note .left-text .note-box {
 		font-size: 24upx;
 		color: #888888;
@@ -115,12 +274,13 @@
 	.a-note .right-edit {
 		width: 109upx;
 		height: 100%;
+		margin-left: 50px;
 		padding: 50upx 0 50upx 58upx;
 		box-sizing: border-box;
 		background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAYAAABV7bNHAAAAAXNSR0IArs4c6QAABPhJREFUeAHtnE1oE0EUx80HQW39SCvYgBVBqhUU+l1FD1ZFPIgnQdDiRfGmh168eBDR4k1B8OLHSVTQg6gnUQ+CaNLWQGu8lSqtrZQKgk1jkzb1/zSzvKyTIO0mM7uZgc28eftm571fZnaTzGR8y4qkRCJRPTMzswsmG3HULiwsBIqYO3bK5/PNoa1oR0fHG8cuWuBCIyMjyycnJy+hzW6YIPPdr6uru1BfX5+iKj57PTjm6+vrOwz9WchdyIN2mzKWL3R2dl4pVXujo6MrJiYmniHO/bwNQLqFN+cM6fIA9ff3b85ms7dRYS+voFCehqNr4HDWaR8KwaF20F4mHA6vamhomLV6RzQabZufn3+B82GnnVnC9RaWULdg1WJwcpWCYBGC/BcQ4GxB4RWO1TkDLTK8k71O957/gEOxv25sbPxJQhDDyR+Lxe5ALgRnEE4OwG7Y7/enqVIZ0hzaiLW3t791si2CMz4+/hzX3FfkumPBYPCUOB/EDfkgCnuEQuSAMoSjB06+FDo356LnIIaicAKBwN6WlpYvIlbqQSdFQeQAk4C+CzfI70Ln5lzAQUx5TytbTGMEp62tbZjrg4DRiopctwxD6RQMKx4OQfEDDn0ItBKAzba2tsYshYuFpfQcEbYfwnJRyOUpQMrvUjYDNxSdgENxEiDPJafgEBjPAXISjucAOQ3HU4BKAcczgEoFxxOASgnH9YBKDcfVgMoBx7WAygWHAFk/mFHBDYng/M9PFrIvnouJz1UfFMsNh4C6BpAKOK4BpAqOKwCphKM9INVwtAakAxxtAekCR0tAOsHRDpBucLQCpCMcbQDpCocAKf8upgOcoaGh9VgHdRrzgTSRehcTpqMEh5LSrxq0eKmcXzz/hpz/Go/H1wJOP7SXsfTnIvI41irUCSulgKampsihfcIZSS6dDpbYLVqVyWRosdgGcQH0oFrMCx4VZaWA4Mxx4YgkLzmcXJu19rbRk9YJnVJAcKLQDG654AgOBXOlgNCD7kk80wYO+aYUUE1NzSU8OW7Aj18Y97QO8QV+CdxtX4JCjqpKSh/ztEgSgZ9DT+oZGBgIAcyMKhCF2lUKSDiF3kNL7ujQLikdYtrRkDhkAEmgcJUBxGlIZANIAoWrDCBOQyIbQBIoXGUAcRoS2QCSQOEqA4jTkMgGkAQKVxlAnIZENoAkULjKAOI0JLIBJIHCVQYQpyGRDSAJFK4ygDgNiWwASaBwlQHEaUhkA0gChav8uekWS4cZhoqChngDVvA5gTMhGN9sBqsHBwd12p7C5p6zRcDI+1Nz7uo/RCv0r+e8/4nTiVQq1S0MKiDfbo8RTCaEjobYU1FgeW9uPw+m8p6IXSe2IiraAigvgcl7ofCHQqEHUNAMJ0/VKDzBdjmNXOklGZtHhdBTruOw33M/5S2gampq+orAr0mC34YtYj6gJ53nC4okdq5T0eiYnp6mjZUO2Z3HWoGbXPdngyXaiiuZTL5DhX/GozBGL0tCzoiyi3PqOStl/iPG4UgkskNsz0U21g5UWIq2KZ1O09hbL6vsdR3g0Jt/AMPrDY/VGn/Nzc2fcT/aCcOP3KBC5Hn0qhN2OBS7BYgKBKmqqmoXIF1F8c8ucKT3cqJhhWM/NpN7JIvTGmL2k3iCRUD1GNbrHcG5BhwRHP986rTX070MGBnENQ4/E7ghP8SWgI/5Pcfu/2//c4lF4CDN7wAAAABJRU5ErkJggg==) no-repeat 43upx center;
 		background-size: 35upx auto;
 	}
-	
+
 	.bottom-box {
 		position: fixed;
 		width: 100%;

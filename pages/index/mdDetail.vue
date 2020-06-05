@@ -60,13 +60,14 @@
 				 uni.switchTab({
 				 	url: '/pages/index/index'
 				 })
-				},50)}else{
-					setTimeout(() => { 
-					 uni.switchTab({
-					 	url: '/pages/index/file'
-					 })
-					}, 50)
-				}
+				},1000)}
+				// else{
+				// 	setTimeout(() => { 
+				// 	 uni.switchTab({
+				// 	 	url: '/pages/index/file'
+				// 	 })
+				// 	}, 1000)
+				// }
 			},
 			preview(src, e) {
 				// do something
